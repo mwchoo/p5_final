@@ -161,11 +161,10 @@ function handleKeyDown() {
 
 function keyPressed() {
   if (keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
-    if (scene === 1 || molphobj.show) return;
     human.walk = true;
-    if (!sounds.walk.isPlaying()) {
+    /*if (!sounds.walk.isPlaying()) {
       sounds.walk.play();
-    }
+    }*/
   }
   if (keyCode === 80) {
     saveImage();
@@ -176,9 +175,9 @@ function keyReleased() {
   if (keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
     human.rot = 0;
     human.walk = false;
-    if (sounds.walk.isPlaying()) {
+    /*if (sounds.walk.isPlaying()) {
       sounds.walk.stop();
-    }
+    }*/
   }
 }
 

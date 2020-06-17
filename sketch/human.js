@@ -83,15 +83,15 @@ class Human {  // Implemented by Minwoo Choo
     }
 
     pop();
-    handleClear();
   }
 }
 
-function handleClear() {
-  const {x, z} = door.pos;
-  if (human.pos.x > x - 60 && human.pos.x < x + 60 &&
-    human.pos.z > z - 40 && human.pos.z < z - 20) {
+/*
+function checkHumanPos() {
+  const {x, y, z} = human.pos;
+  if (x < 190 && x > -198 &&
+    y < -0.06 && y > -0.94 &&
+    z < -382 && z > -614) {
     scene = 1;
-    bgColor = color(255, 255, 255);
   }
-}
+}*/
