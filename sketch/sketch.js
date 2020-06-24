@@ -56,7 +56,6 @@ let sketch1 = function (p) {
 
   p.draw = function () {
     p.clear();
-    //p.background(0);
 
     p.ambientLight(70);
     p.pointLight(100, 100, 100, p.sin(p.srot) * 4000, -1300, p.cos(p.srot) * 100 - 100);
@@ -69,9 +68,6 @@ let sketch1 = function (p) {
 
     p.camera(p.X, p.Y, p.Z, p.centerX, p.centerY, p.centerZ, 0, 1, 0);
 
-    /*p.rotateX(p.frameCount%100/50);
-    p.rotateY(p.frameCount%100/50);
-    p.box(p.frameCount%100);*/
     p.drawStone();
     p.drawArm();
   }
