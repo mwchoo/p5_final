@@ -23,13 +23,14 @@ class Wave {
   }
 
   setActiveTime() {
+    const {p} = this;
     this.startTime = p.millis();
     this.visible = true;
   }
 
   checkActiveTime() {
     const {p, startTime, timeDelta} = this;
-    if (startTime + timeDelta >= p.millis()) {
+    if (startTime + timeDelta <= p.millis()) {
       this.visible = false;
     }
   }
@@ -59,7 +60,7 @@ class Wave {
     p.stroke(100);
 
     for (let i = 0; i < n - 1; i++) {
-      p.beginShape(p.QUAD_STRIP);
+      p.beginShape('QUAD_STRIP');
       //noStroke();
       for (let j = 0; j < n - 1; j++) {
         this.v = points.get(j + n * i);
@@ -79,6 +80,7 @@ class Wave {
     if (visible) {
       this.initWave();
       this.drawWave();
+      this.checkActiveTime();
     }
     p.pop();
   }
