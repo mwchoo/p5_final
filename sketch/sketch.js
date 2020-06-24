@@ -1,190 +1,142 @@
 /*
-2020-1 Computer Grapics :: FINAL PROJECT - INTERACTIVE 3D GAME
+2020-1 Computer Grapics :: FINAL PROJECT - INTERACTIVE 3D GAME "Pongdang Pongdang"
 20141150 Minwoo Choo
 
 < MANUAL >
-ARROW_UP Key: go forward
-ARROW_DOWN Key: go backward
-ARROW_LEFT Key: turn your head to the left
-ARROW_RIGHT Key: turn your head to the right
+MOUSE Drag and Drop: throw a stone
 
 P Key: screen shot
 */
 
-let scene = 0;
-let sounds = {
-  bgm: undefined,
-  walk: undefined,
-  stream: undefined,
-  pongdang: undefined,
-  throw: undefined
-}
-let humanModel = {
-  body: undefined,
-  leg_l_h: undefined,
-  leg_l_l: undefined,
-  leg_r_h: undefined,
-  leg_r_l: undefined
-};
-let bgColor;
-let human;
-//let scene_timer;
-let rot = 0;
-
-let X = 160;  // 0;
-let Y = -200;  // 0;
-let Z = 500;  //1700;
-let centerX = 0;
-let centerY = -100;
-let centerZ = -2000;
-let h = 20;
-
-let spotPos, spotDir, modelPos;
-let mrot, srot;
-
-document.onselectstart = function () {
-  // prevent mouse drag or text/element selection
-  window.getSelection().removeAllRanges();
-};
-
-function preload() {
-  sounds.bgm = loadSound('assets/bgm.mp3');
-  sounds.walk = loadSound('assets/walk.mp3');
-  humanModel.body = loadModel('assets/body.obj');
-  humanModel.leg_l_h = loadModel('assets/leg_l_h.obj');
-  humanModel.leg_l_l = loadModel('assets/leg_l_l.obj');
-  humanModel.leg_r_h = loadModel('assets/leg_r_h.obj');
-  humanModel.leg_r_l = loadModel('assets/leg_r_l.obj');
-}
-
-function setup() {
-  // const blinder = document.getElementById('blinder');
-  createCanvas(windowWidth, windowHeight, WEBGL);
-  colorMode(RGB, 255, 255, 255, 1);
-  /*
-  gl = this._renderer.GL;
-  gl.disable(gl.DEPTH_TEST);*/
-
-  //scene_timer = new Timer(3000, handleScene);
-  bgColor = color(0, 0, 0);
-  spotPos = new p5.Vector(-1000, 2000, 200);
-  modelPos = new p5.Vector(-200, 1000, 0);
-  mrot = 0;
-  srot = 0;
-
-  human = new Human();
-  /*initButtomMark();
-  initMolph();*/
-  //sounds.bgm.play();
-}
-
-function draw() {
-  background(bgColor);
-
-  // scene control
-  if (scene === 0) {
-    // throw a stone
-  } else if (scene === 1) {
-    return;
-  } else if (scene === 2) {
-    return;
+let sketch1 = function (p) {
+  p.X = 160;  // 0;
+  p.Y = -200;  // 0;
+  p.Z = 1700;
+  p.centerX = 0;
+  p.centerY = -100;
+  p.centerZ = -2000;
+  p.sounds = {
+    bgm: undefined,
+    wind: undefined,
+    pong: undefined
+  }
+  p.models = {
+    arm: {
+      // ToDo. Add fingers and body?
+      high: undefined,
+      low: undefined
+    }
   }
 
-  // light setting
-  //lights();
-  ambientLight(70);
-  pointLight(100, 100, 100, sin(srot) * 4000, -1300, cos(srot) * 100 - 100);
-  directionalLight(250, 250, 250, 0, 0, 2000);
-
-  srot += 0.01;
-  spotPos.x = 200 * cos(srot);
-  spotPos.y = 200 * sin(srot);
-  spotDir = p5.Vector.sub(modelPos, spotPos);
-  spotLight(0, 100, 100, spotPos, spotDir, radians(90), 1);
-
-  // camera setting
-  camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
-
-  human.render();
-  //drawBottomMark();
-  //molphobj.render();
-  //handleHeartbeat();
-
-  /*if (!sounds.bgm.isPlaying()) {
-    getAudioContext().resume();
-    sounds.bgm.play();
-  }*/
-
-  handleKeyDown();
-}
-
-function handleKeyDown() {
-  if (scene === 1) return;
-
-  if (keyIsDown(UP_ARROW)) {
-    // go forward
-    human.walk = true;
-    human.direction = 'forward';
-    human.pos.z -= 2;
-
-    Z -= 2;
-    Y = cos(Z / 10) * 10 - 200;  // walk effect
-  } else if (keyIsDown(DOWN_ARROW)) {
-    // go backward
-    human.walk = true;
-    human.direction = 'backward';
-    human.pos.z += 2;
-
-    Z += 2;
-    Y = cos(Z / 10) * 10 - 200;  // walk effect
+  p.preload = function () {
+    // ToDo. Add sound effects (6/23 TUE)
+    /*p.sounds.bgm = p.loadSound('assets/bgm.mp3');
+    p.sounds.wind = p.loadSound('assets/wind.mp3');
+    p.sounds.pong = p.loadSound('assets/pong.mp3');*/
+    p.models.arm.high = p.loadModel('assets/arm_h.obj');
+    p.models.arm.low = p.loadModel('assets/arm_l.obj');
+    // ToDo. Add fingers and body? (6/23 TUE)
   }
-  if (keyIsDown(LEFT_ARROW)) {
-    // turn your head to the left
-    human.walk = true;
-    human.direction = 'left'
-    human.pos.x += 2;
 
-    X -= 2;
-    Y = cos(X / 10) * 10 - 200;  // walk effect
-    centerX -= 2;
-  } else if (keyIsDown(RIGHT_ARROW)) {
-    // turn your head to the right
-    human.walk = true;
-    human.direction = 'right';
-    human.pos.x -= 2;
+  p.setup = function () {
+    p.cnv = p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
+    p.cnv.id('p5canvas');
+    p.cnv.style('position', 'absolute');
+    p.cnv.style('left', '0');
+    p.cnv.style('top', '0');
 
-    X += 2;
-    Y = cos(X / 10) * 10 - 200;  // walk effect
-    centerX += 2;
+    p.spotPos = new p5.Vector(-1000, -1000, 500);
+    p.modelPos = new p5.Vector(-200, 0, 0);
+    p.mrot = 0;
+    p.srot = 0;
+
+    p.arm = new Arm(p);
+    p.grp = p.createGraphics(window.innerWidth / 2, window.innerHeight / 2, 'webgl');
+  }
+
+  p.draw = function () {
+    p.clear();
+    //p.background(0);
+
+    p.ambientLight(70);
+    p.pointLight(100, 100, 100, p.sin(p.srot) * 4000, -1300, p.cos(p.srot) * 100 - 100);
+
+    p.srot += 0.01;
+    p.spotPos.x = 200 * p.cos(p.srot);
+    p.spotPos.y = 200 * p.sin(p.srot) - 1000;
+    p.spotDir = p5.Vector.sub(p.modelPos, p.spotPos);
+    p.spotLight(0, 100, 100, p.spotPos, p.spotDir, p.radians(90), 1);
+
+    p.camera(p.X, p.Y, p.Z, p.centerX, p.centerY, p.centerZ, 0, 1, 0);
+
+    /*p.rotateX(p.frameCount%100/50);
+    p.rotateY(p.frameCount%100/50);
+    p.box(p.frameCount%100);*/
+    p.drawStone();
+    p.drawArm();
+  }
+
+  p.drawStone = function () {
+    p.push();
+    //
+    p.pop();
+  }
+
+  p.drawArm = function () {
+    p.push();
+    p.arm.render();
+    p.pop();
+  }
+
+  p.windowResized = function () {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
   }
 }
 
-function keyPressed() {
-  if (keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
-    human.walk = true;
-    /*if (!sounds.walk.isPlaying()) {
-      sounds.walk.play();
-    }*/
+let waterGL = function (p) {
+  lastTime = (new Date()).getTime() / 1000;
+
+  p.setup = function () {
+    p.cnv = p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
+    p.cnv.id('waterGLcanvas');
+    p.cnv.style('background', 'black');
+    p.noStroke();
+    p.simulatorCanvas = document.getElementById('waterGLcanvas')
+    p.simulator = new Simulator(p.simulatorCanvas, window.innerWidth, window.innerHeight);
+    p.simulator.setSize(215);
+    p.simulator.setWind(-4.11, 2.83);
+    p.simulator.setChoppiness(1.5);
+
+    p.camera = new Camera(),
+      p.projectionMatrix = makePerspectiveMatrix(new Float32Array(16), FOV, MIN_ASPECT, NEAR, FAR);
   }
-  if (keyCode === 80) {
-    saveImage();
+
+  p.draw = function () {
+    p.projectionMatrix = makePerspectiveMatrix(new Float32Array(16), FOV, MIN_ASPECT, NEAR, FAR);
+    makePerspectiveMatrix(p.projectionMatrix, FOV, window.innerWidth / window.innerHeight, NEAR, FAR);
+    p.deltaTime = ((new Date()).getTime() / 1000 - lastTime) / 1000 || 0.0;
+    p.simulator.render(p.deltaTime, p.projectionMatrix, p.camera.getViewMatrix(), p.camera.getPosition());
+  }
+
+  p.windowResized = function () {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
   }
 }
 
-function keyReleased() {
-  if (keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
-    human.rot = 0;
-    human.walk = false;
-    /*if (sounds.walk.isPlaying()) {
-      sounds.walk.stop();
-    }*/
-  }
+let sk1;
+let sk2;
+
+function execsk1() {
+  sk1 = new p5(sketch1);
 }
+
+function execsk2() {
+  sk2 = new p5(waterGL);
+}
+
+setTimeout(execsk1, 100);
+setTimeout(execsk2, 200);
 
 function saveImage() {
   saveCanvas("image", "jpg");
-}
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
 }
