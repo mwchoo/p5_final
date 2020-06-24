@@ -51,7 +51,6 @@ let sketch1 = function (p) {
     p.srot = 0;
 
     p.arm = new Arm(p);
-    p.grp = p.createGraphics(window.innerWidth / 2, window.innerHeight / 2, 'webgl');
   }
 
   p.draw = function () {
