@@ -54,7 +54,7 @@ const sketch1 = p => {
     p.arm = new Arm(p);
     p.wave = [];
     for (let i = 0; i < p.MAX_WAVE; i++) {
-      p.wave.push(new Wave(p));
+      p.wave.push(new Wave(p, i));
     }
   }
 

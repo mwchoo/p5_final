@@ -1,19 +1,36 @@
 class Wave {
-  constructor(p) {
+  constructor(p, id) {
     this.p = p;
+    this.id = id;
     this.pos = {
       x: 0,
       y: 0,
       z: 0
     }
+
+    this.angle = 99;
+    this.w = 44;
+    this.ma = p.atan(1 / p.sqrt(2));
+    this.maxD = p.dist(0, 0, 200, 200);
+
     this.points = new ArrayList();
     this.l = 5; // spacing between points
     this.n = 60; // num of points
     this.t = 0;
     this.v = new p5.Vector();
+
     this.visible = false;
     this.startTime = undefined;
     this.timeDelta = 3000;
+    this.execNextWave = false;
+
+    if (id === 1) {
+      this.waveColor = p.color(75, 116, 148);
+    } else if (id === 2) {
+      this.waveColor = p.color(88, 135, 164);
+    } else {
+      this.waveColor = p.color(62, 98, 127);
+    }
   }
 
   setPos(x, y, z) {
@@ -26,16 +43,26 @@ class Wave {
     const {p} = this;
     this.startTime = p.millis();
     this.visible = true;
+    this.execNextWave = false;
   }
 
   checkActiveTime() {
-    const {p, startTime, timeDelta} = this;
+    const {p, id, startTime, timeDelta, execNextWave} = this;
+    if (id < p.MAX_WAVE - 1) {
+      if (!execNextWave && startTime + timeDelta / 3 <= p.millis()) {
+        // active next wave
+        p.wave[id + 1].setActiveTime();
+        p.wave[id + 1].setPos(this.pos.x, this.pos.y, this.pos.z - 2000);
+        this.execNextWave = true;
+      }
+    }
     if (startTime + timeDelta <= p.millis()) {
+      // remove current wave
       this.visible = false;
     }
   }
 
-  initWave() {
+  /*initWave() {
     const {p, l, n, t} = this;
     this.t = p.millis() / 500;
     //translate(width/2, height/2, 0);
@@ -51,16 +78,18 @@ class Wave {
         this.points.add(new p5.Vector(x2, y2, z));
       }
     }
-  }
+  }*/
 
-  drawWave() {
-    const {p, l, n, t, v, points, pos} = this;
+  drawWave() {  // QUAD_STRIP is not implemented in webgl... :(
+    const {p, l, n, t, v, points, pos, w, maxD, angle} = this;
     p.push();
-    p.translate(pos.x, pos.y, pos.z);
-    p.stroke(100);
+    p.scale(0.3);
+    p.rotateX(-p.HALF_PI / 2);
+    p.translate(pos.x, pos.y + 2000, pos.z - 2000);
+    /*p.stroke(100);
 
     for (let i = 0; i < n - 1; i++) {
-      p.beginShape('QUAD_STRIP');
+      p.beginShape(p.QUAD_STRIP);
       //noStroke();
       for (let j = 0; j < n - 1; j++) {
         this.v = points.get(j + n * i);
@@ -70,7 +99,24 @@ class Wave {
         p.vertex(v.x, v.y, v.z);
       }
       p.endShape();
+    }*/
+
+    for (let z = 0; z < 1000; z += w) {
+      for (let x = 0; x < 1000; x += w) {
+        p.push();
+        let d = p.dist(x, z, 1000 / 2, 1000 / 2);
+        let offset = p.map(d, 0, maxD, -p.PI / 2, p.PI / 2);
+        let a = angle + offset;
+        let h = p.map(p.sin(a), -1, 1, 0, 100);
+        p.noStroke();
+        p.translate(x - 1000 / 1.6, -250, z - 1000 / 2);
+        p.fill(this.waveColor);
+        p.translate(0, 0, h);
+        p.box(w - 2, 2, w - 2);
+        p.pop();
+      }
     }
+    this.angle -= 0.1;
     p.pop();
   }
 
@@ -78,7 +124,7 @@ class Wave {
     const {p, visible} = this;
     p.push();
     if (visible) {
-      this.initWave();
+      //this.initWave();
       this.drawWave();
       this.checkActiveTime();
     }
