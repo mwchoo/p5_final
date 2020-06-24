@@ -8,7 +8,7 @@ MOUSE Drag and Drop: throw a stone
 P Key: screen shot
 */
 
-let sketch1 = function (p) {
+const sketch1 = p => {
   p.X = 160;  // 0;
   p.Y = -200;  // 0;
   p.Z = 1700;
@@ -22,13 +22,14 @@ let sketch1 = function (p) {
   }
   p.models = {
     arm: {
-      // ToDo. Add fingers and body?
+      // ToDo. Add fingers and body? -> not enough time to implement it..... :(
       high: undefined,
       low: undefined
     }
   }
+  p.MAX_WAVE = 3;
 
-  p.preload = function () {
+  p.preload = () => {
     // ToDo. Add sound effects (6/23 TUE)
     /*p.sounds.bgm = p.loadSound('assets/bgm.mp3');
     p.sounds.wind = p.loadSound('assets/wind.mp3');
@@ -38,7 +39,7 @@ let sketch1 = function (p) {
     // ToDo. Add fingers and body? (6/23 TUE)
   }
 
-  p.setup = function () {
+  p.setup = () => {
     p.cnv = p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
     p.cnv.id('p5canvas');
     p.cnv.style('position', 'absolute');
@@ -51,9 +52,13 @@ let sketch1 = function (p) {
     p.srot = 0;
 
     p.arm = new Arm(p);
+    p.wave = [];
+    for (let i = 0; i < p.MAX_WAVE; i++) {
+      p.wave.push(new Wave(p));
+    }
   }
 
-  p.draw = function () {
+  p.draw = () => {
     p.clear();
 
     p.ambientLight(70);
@@ -69,29 +74,49 @@ let sketch1 = function (p) {
 
     p.drawStone();
     p.drawArm();
+    p.drawWave();
   }
 
-  p.drawStone = function () {
+  p.drawStone = () => {
     p.push();
     //
     p.pop();
   }
 
-  p.drawArm = function () {
+  p.drawArm = () => {
     p.push();
     p.arm.render();
     p.pop();
   }
 
-  p.windowResized = function () {
+  p.drawWave = () => {
+    for (let i = 0; i < p.MAX_WAVE; i++) {
+      p.wave[i].render();
+    }
+  }
+
+  p.mouseClicked = () => {  // ToDo: execute when stone hits water
+    p.wave[0].setActiveTime();
+    // ToDo: init "power"
+  }
+
+  p.mousePressed = () => {
+    // ToDo: increase "power"
+  }
+
+  p.mouseReleased = () => {
+    // ToDo: throw a stone using "power"
+  }
+
+  p.windowResized = () => {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
   }
 }
 
-let waterGL = function (p) {
-  lastTime = (new Date()).getTime() / 1000;
+const waterGL = p => {
+  const lastTime = (new Date()).getTime() / 1000;
 
-  p.setup = function () {
+  p.setup = () => {
     p.cnv = p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
     p.cnv.id('waterGLcanvas');
     p.cnv.style('background', 'black');
@@ -106,27 +131,24 @@ let waterGL = function (p) {
       p.projectionMatrix = makePerspectiveMatrix(new Float32Array(16), FOV, MIN_ASPECT, NEAR, FAR);
   }
 
-  p.draw = function () {
+  p.draw = () => {
     p.projectionMatrix = makePerspectiveMatrix(new Float32Array(16), FOV, MIN_ASPECT, NEAR, FAR);
     makePerspectiveMatrix(p.projectionMatrix, FOV, window.innerWidth / window.innerHeight, NEAR, FAR);
     p.deltaTime = ((new Date()).getTime() / 1000 - lastTime) / 1000 || 0.0;
     p.simulator.render(p.deltaTime, p.projectionMatrix, p.camera.getViewMatrix(), p.camera.getPosition());
   }
 
-  p.windowResized = function () {
+  p.windowResized = () => {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
   }
 }
 
-let sk1;
-let sk2;
-
 function execsk1() {
-  sk1 = new p5(sketch1);
+  new p5(sketch1);
 }
 
 function execsk2() {
-  sk2 = new p5(waterGL);
+  new p5(waterGL);
 }
 
 setTimeout(execsk1, 100);
