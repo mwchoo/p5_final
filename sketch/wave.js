@@ -52,7 +52,7 @@ class Wave {
       if (!execNextWave && startTime + timeDelta / 3 <= p.millis()) {
         // active next wave
         p.wave[id + 1].setActiveTime();
-        p.wave[id + 1].setPos(this.pos.x, this.pos.y, this.pos.z - 2000);
+        p.wave[id + 1].setPos(this.pos.x + p.random(-300, 300), this.pos.y, this.pos.z - p.random(1200, 2000));
         this.execNextWave = true;
       }
     }
