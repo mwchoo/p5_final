@@ -7,26 +7,66 @@ class Arm {
       y: 0,
       z: 0
     }
-    this.scale = 1;
+    this.scale = 10;
     this.colors = {
       skin: p.color(255, 206, 186)
     }
+
+    this.stone_flying = false;
+    this.stone_pos = {
+      x: 0,
+      y: -200,
+      z: 0
+    }
+
+    this.startY = 0;
+    this.endY = 0;
+    this.ypos = 0;
   }
 
   handleGrap() {
-    if (this.grap) {
-      //
+    const {p} = this;
+    // ToDo. add finger control...
+    if (!this.grap && p.mouseIsPressed) {
+      this.stone_pos.y += 10;
+      if (this.stone_pos.y >= 0) {
+        this.stone_pos.y = 0;
+        this.grap = true;
+      }
     }
   }
 
+  handleStoneFlying() {
+    const {p, stone_pos, stone_flying, ypos} = this;
+    const {x, y, z} = stone_pos;
+    if (stone_flying) {
+      if (y < -370) {
+        this.stone_flying = false;
+        if (ypos < 880 && ypos > 470) {
+          p.wave[0].setPos(z, y, x - 500);
+          p.wave[0].setActiveTime();
+        }
+      }
+      p.arm.setStonePos(x + 15, y - 5, z);
+    }
+  }
+
+  setStonePos(x, y, z) {
+    this.stone_pos.x = x;
+    this.stone_pos.y = y;
+    this.stone_pos.z = z;
+  }
+
   drawArm() {
-    const {p} = this;
+    const {p, scale, stone_pos, stone_flying, ypos} = this;
     const {arm} = p.models;
-    const ypos = p.mouseY < 300 ? 300 :
-      p.mouseY > p.height - 200 ? p.height - 200 :
-        p.mouseY;
+    if (!stone_flying) {
+      this.ypos = p.mouseY < 300 ? 300 :
+        p.mouseY > p.height - 200 ? p.height - 200 :
+          p.mouseY;
+    }
     p.push();
-    p.scale(10);
+    p.scale(scale);
     p.noStroke();
     p.fill(255, 206, 186);
     p.specularMaterial(this.colors.skin);
@@ -40,11 +80,6 @@ class Arm {
 
     /* sangbak */
     p.push();
-
-    p.translate(0, 0, 0);
-    //p.rotateZ(p.HALF_PI/4);
-    p.translate(0, 0, 0);
-    p.rotateY(0);
     p.model(arm.high);
     p.pop();
 
@@ -57,6 +92,19 @@ class Arm {
     p.rotateY(p.map(ypos, 300, p.height - 200, -4.77, -6.48));  // -6.48 to -4.77
     p.translate(0, 0, 34);
     p.model(arm.low);
+
+    // find hand position and draw stone
+    p.push();
+    p.translate(20 + stone_pos.x, 32 + stone_pos.y, 40 + stone_pos.z);
+    //console.log(stone_pos);
+    p.rotateX(p.HALF_PI);
+    if (stone_flying) {
+      //p.rotateY(p.millis() / 1000);
+    }
+    p.fill(80, 80, 80);
+    p.sphere(6, 3, 16);
+    p.pop();
+
     p.pop();
 
     p.pop();
@@ -65,6 +113,8 @@ class Arm {
   render() {
     const {p} = this;
     p.push();
+    this.handleGrap();
+    this.handleStoneFlying();
     this.drawArm();
     p.pop();
   }

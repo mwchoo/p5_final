@@ -56,6 +56,7 @@ const sketch1 = p => {
     for (let i = 0; i < p.MAX_WAVE; i++) {
       p.wave.push(new Wave(p, i));
     }
+    p.stone = new Stone(p);
   }
 
   p.draw = () => {
@@ -78,15 +79,11 @@ const sketch1 = p => {
   }
 
   p.drawStone = () => {
-    p.push();
-    //
-    p.pop();
+    p.stone.render();
   }
 
   p.drawArm = () => {
-    p.push();
     p.arm.render();
-    p.pop();
   }
 
   p.drawWave = () => {
@@ -96,16 +93,32 @@ const sketch1 = p => {
   }
 
   p.mouseClicked = () => {  // ToDo: execute when stone hits water
-    p.wave[0].setActiveTime();
+    //p.wave[0].setActiveTime();
     // ToDo: init "power"
   }
 
   p.mousePressed = () => {
+    const ypos = p.mouseY < 300 ? 300 :
+      p.mouseY > p.height - 200 ? p.height - 200 :
+        p.mouseY;
     // ToDo: increase "power"
+    p.arm.stone_pos.x = 0;
+    p.arm.stone_pos.y = -200;
+    p.arm.stone_pos.z = 0;
+    p.arm.grap = false;
+    p.arm.stone_flying = false;
+    p.arm.startY = ypos;
   }
 
   p.mouseReleased = () => {
+    const ypos = p.mouseY < 300 ? 300 :
+      p.mouseY > p.height - 200 ? p.height - 200 :
+        p.mouseY;
     // ToDo: throw a stone using "power"
+    //const {x, y, z} = p.arm.stone_pos;
+    //p.arm.setStonePos(x + 10, y + 1, z);
+    p.arm.endY = ypos;
+    p.arm.stone_flying = true;
   }
 
   p.windowResized = () => {
