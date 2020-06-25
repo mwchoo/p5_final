@@ -25,6 +25,8 @@ class Wave {
     this.timeDelta = 3000;
     this.execNextWave = false;
 
+    this.go_stop = 0;
+
     if (id === 1) {
       this.waveColor = p.color(75, 116, 148);
     } else if (id === 2) {
@@ -45,6 +47,7 @@ class Wave {
     this.startTime = p.millis();
     this.visible = true;
     this.execNextWave = false;
+    this.go_stop = p.random(10);
   }
 
   checkActiveTime() {
@@ -52,9 +55,11 @@ class Wave {
     if (id < p.MAX_WAVE - 1) {
       if (!execNextWave && startTime + timeDelta / 3 <= p.millis()) {
         // active next wave
-        p.wave[id + 1].setActiveTime();
-        p.wave[id + 1].setPos(this.pos.x + p.random(-300, 300), this.pos.y, this.pos.z - p.random(1200, 2000));
-        this.execNextWave = true;
+        if (this.go_stop > 3) {
+          p.wave[id + 1].setActiveTime();
+          p.wave[id + 1].setPos(this.pos.x + p.random(-300, 300), this.pos.y, this.pos.z - p.random(1200, 2000));
+          this.execNextWave = true;
+        }
       }
     }
     if (startTime + timeDelta <= p.millis()) {
