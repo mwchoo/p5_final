@@ -45,6 +45,7 @@ class Arm {
         if (ypos < 880 && ypos > 470) {
           p.wave[0].setPos(z, y, x - 500);
           p.wave[0].setActiveTime();
+          p.sounds.pong.play();
         }
       }
       p.arm.setStonePos(x + 15, y - 5, z);

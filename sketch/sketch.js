@@ -17,7 +17,6 @@ const sketch1 = p => {
   p.centerZ = -2000;
   p.sounds = {
     bgm: undefined,
-    wind: undefined,
     pong: undefined
   }
   p.models = {
@@ -32,9 +31,8 @@ const sketch1 = p => {
 
   p.preload = () => {
     // ToDo. Add sound effects (6/23 TUE)
-    /*p.sounds.bgm = p.loadSound('assets/bgm.mp3');
-    p.sounds.wind = p.loadSound('assets/wind.mp3');
-    p.sounds.pong = p.loadSound('assets/pong.mp3');*/
+    p.sounds.bgm = p.loadSound('assets/bgm.mp3');
+    p.sounds.pong = p.loadSound('assets/pong.mp3');
     p.models.arm.high = p.loadModel('assets/arm_h.obj');
     p.models.arm.low = p.loadModel('assets/arm_l.obj');
     p.models.sister = p.loadModel('assets/sitting.obj');
@@ -59,6 +57,7 @@ const sketch1 = p => {
       p.wave.push(new Wave(p, i));
     }
     p.stone = new Stone(p);
+    p.sounds.bgm.play();
   }
 
   p.draw = () => {
@@ -79,6 +78,11 @@ const sketch1 = p => {
     p.drawArm();
     p.drawWave();
     p.drawSister();
+
+    if (!p.sounds.bgm.isPlaying()) {
+      getAudioContext().resume();
+      p.sounds.bgm.play();
+    }
   }
 
   p.drawStone = () => {
