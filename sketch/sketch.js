@@ -25,7 +25,8 @@ const sketch1 = p => {
       // ToDo. Add fingers and body? -> not enough time to implement it..... :(
       high: undefined,
       low: undefined
-    }
+    },
+    sister: undefined
   }
   p.MAX_WAVE = 3;
 
@@ -36,11 +37,12 @@ const sketch1 = p => {
     p.sounds.pong = p.loadSound('assets/pong.mp3');*/
     p.models.arm.high = p.loadModel('assets/arm_h.obj');
     p.models.arm.low = p.loadModel('assets/arm_l.obj');
+    p.models.sister = p.loadModel('assets/sitting.obj');
     // ToDo. Add fingers and body? (6/23 TUE)
   }
 
   p.setup = () => {
-    p.cnv = p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
+    p.cnv = p.createCanvas(window.innerHeight * 0.55, window.innerHeight, 'webgl');
     p.cnv.id('p5canvas');
     p.cnv.style('position', 'absolute');
     p.cnv.style('left', '0');
@@ -76,6 +78,7 @@ const sketch1 = p => {
     p.drawStone();
     p.drawArm();
     p.drawWave();
+    p.drawSister();
   }
 
   p.drawStone = () => {
@@ -90,6 +93,18 @@ const sketch1 = p => {
     for (let i = 0; i < p.MAX_WAVE; i++) {
       p.wave[i].render();
     }
+  }
+
+  p.drawSister = () => {
+    p.push();
+    p.noStroke();
+    p.translate(0, -1000, -1000);
+    p.scale(0.3);
+    p.rotateX(p.PI);
+    p.rotateY(-p.HALF_PI);
+    p.rotateZ(p.HALF_PI/4);
+    p.model(p.models.sister);
+    p.pop();
   }
 
   p.mouseClicked = () => {  // ToDo: execute when stone hits water
@@ -130,7 +145,7 @@ const waterGL = p => {
   const lastTime = (new Date()).getTime() / 1000;
 
   p.setup = () => {
-    p.cnv = p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
+    p.cnv = p.createCanvas(window.innerHeight * 0.55, window.innerHeight, 'webgl');
     p.cnv.id('waterGLcanvas');
     p.cnv.style('background', 'black');
     p.noStroke();
