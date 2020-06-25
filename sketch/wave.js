@@ -2,6 +2,7 @@ class Wave {
   constructor(p, id) {
     this.p = p;
     this.id = id;
+    this.scale = 0.3;
     this.pos = {
       x: 0,
       y: 0,
@@ -81,9 +82,9 @@ class Wave {
   }*/
 
   drawWave() {  // QUAD_STRIP is not implemented in webgl... :(
-    const {p, l, n, t, v, points, pos, w, maxD, angle} = this;
+    const {p, pos, w, maxD, angle} = this;
     p.push();
-    p.scale(0.3);
+    p.scale(this.scale);
     p.rotateX(-p.HALF_PI / 2);
     p.translate(pos.x, pos.y + 2000, pos.z - 2000);
     /*p.stroke(100);
